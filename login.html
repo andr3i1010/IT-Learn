@@ -159,11 +159,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   setTimeout(() => {
     try {
-      if (typeof turnstile !== 'undefined') {
-        const oldToken = turnstile.getResponse();
+      if (typeof window.turnstile !== 'undefined') {
+        const oldToken = getTurnstileResponseSafe();
         console.log('[LOGIN] Page load - old token (first 20):', oldToken ? oldToken.substring(0, 20) + '...' : 'NONE');
-        turnstile.reset();
-        console.log('[LOGIN] Turnstile reset on page load');
+        if (resetTurnstileSafe()) {
+          console.log('[LOGIN] Turnstile reset on page load');
+        }
       }
     } catch (e) {
       console.warn('[LOGIN] Could not reset Turnstile on load:', e);
@@ -189,6 +190,31 @@ function updatePasswordToggleLabels(lang) {
     btn.setAttribute('aria-label', isPressed ? hide : show);
     btn.setAttribute('title', isPressed ? hide : show);
 }
+
+  function getTurnstileResponseSafe() {
+    if (typeof window.turnstile === 'undefined' || typeof window.turnstile.getResponse !== 'function') {
+      return '';
+    }
+    try {
+      return window.turnstile.getResponse() || '';
+    } catch (e) {
+      console.warn('[LOGIN] Turnstile getResponse failed:', e);
+      return '';
+    }
+  }
+
+  function resetTurnstileSafe() {
+    if (typeof window.turnstile === 'undefined' || typeof window.turnstile.reset !== 'function') {
+      return false;
+    }
+    try {
+      window.turnstile.reset();
+      return true;
+    } catch (e) {
+      console.warn('[LOGIN] Turnstile reset failed:', e);
+      return false;
+    }
+  }
 
 function initPasswordToggle() {
     const pw = document.getElementById('password');
@@ -311,7 +337,10 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   const submitBtn = document.querySelector('#login-form .btn');
   if (submitBtn) submitBtn.disabled = true;
 
-      let captchaToken = turnstile.getResponse();
+      let captchaToken = getTurnstileResponseSafe();
+      if (!captchaToken && typeof window.turnstile === 'undefined') {
+        console.warn('[LOGIN] Turnstile is not available on this page.');
+      }
       const tokenPrefix = captchaToken ? captchaToken.substring(0, 20) : 'NONE';
       console.log('[LOGIN] Initial token check:', captchaToken ? 'Token exists' : 'No token');
       console.log('[LOGIN] Token prefix:', tokenPrefix);
@@ -329,7 +358,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
         console.log('[LOGIN] Waiting for token to generate...');
         for (let i = 0; i < 6; i++) {
           await new Promise(resolve => setTimeout(resolve, 500));
-          captchaToken = turnstile.getResponse();
+          captchaToken = getTurnstileResponseSafe();
           if (captchaToken) {
             console.log('[LOGIN] Token ready after', (i + 1) * 500, 'ms');
             break;
@@ -391,7 +420,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
         
         console.log('[LOGIN] Resetting CAPTCHA after error');
         try { 
-          turnstile.reset();
+          resetTurnstileSafe();
           await new Promise(resolve => setTimeout(resolve, 500));
         } catch (e) {
           console.error('[LOGIN] Turnstile reset failed:', e);
@@ -432,7 +461,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
         await showAlert('An error occurred while logging in.', { title: 'Login error' });
         
         try { 
-          turnstile.reset();
+          resetTurnstileSafe();
           await new Promise(resolve => setTimeout(resolve, 500));
         } catch {}
     } finally {
