@@ -893,7 +893,7 @@ export async function renderProjectIdeView(rootEl, { projectId, file, view } = {
       const payloadMessages = aiChatHistory.map(m => ({ ...m }));
       payloadMessages[payloadMessages.length - 1].content = `Project context:\n${systemMessage}\n\nUser question: ${text}`;
 
-      const res = await fetch('/api/ai?p=projects-assist', {
+      const res = await fetch('https://itlearn.pythonanywhere.com/api/ai?p=projects-assist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: payloadMessages })
@@ -1084,4 +1084,5 @@ export async function renderProjectIdeView(rootEl, { projectId, file, view } = {
   // Initial preview
   refreshPreview();
 }
+
 
