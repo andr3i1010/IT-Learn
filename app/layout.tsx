@@ -14,12 +14,24 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="bg-background text-text-primary">
+    <html lang="en" className="antialiased">
+      <body className="bg-background text-text-primary font-sans">
 
-        <TRPCReactProvider>
-          {children}
-        </TRPCReactProvider>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
+
+        <Navbar />
+
+        <main id="main-content" className="min-h-screen pt-16">
+          <TRPCReactProvider>
+            {children}
+          </TRPCReactProvider>
+        </main>
+
         <Footer />
       </body>
     </html>
