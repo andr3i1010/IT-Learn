@@ -26,8 +26,9 @@
   --error: #ef4444;
 }
 
-html {
-  scroll-behavior: smooth;
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background-color: var(--background);
 }
 
 body {
