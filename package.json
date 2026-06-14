@@ -29,6 +29,7 @@
     "nodemailer": "^8.0.11",
     "pg": "^8.21.0",
     "radix-ui": "^1.5.0",
+    "raw-loader": "^4.0.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "server-only": "^0.0.1",

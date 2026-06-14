@@ -3,6 +3,8 @@ import './globals.css'
 import { TRPCReactProvider } from '@/trpc/client'
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { auth } from '@/lib/auth/server';
+import { UserProvider } from '@/components/userStore';
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -11,17 +13,23 @@ export const metadata: Metadata = {
   description: 'Learn IT skills and advance your career with ITLearn',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
-}) {
+  }) {
+  const headers = new Headers();
+  const user = await auth.api.getSession({
+    headers 
+  })
   return (
     <html lang="en" className={cn("antialiased", "font-sans", geist.variable)}>
       <body className="bg-background text-text-primary font-sans">
         <main id="main-content" className="min-h-screen">
           <TRPCReactProvider>
-            {children}
+            <UserProvider user={user}>
+              {children}
+            </UserProvider>
           </TRPCReactProvider>
         </main>
       </body>
