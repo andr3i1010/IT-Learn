@@ -1,320 +1,589 @@
+'use client'
+
+import { useState, useRef } from 'react'
+import Link from 'next/link'
+import { motion, useScroll, useTransform } from 'framer-motion'
+
 export default function Home() {
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap');
+    <div className="bg-background">
+      <Hero />
+      <HowItWorks />
+      <CourseCards />
+      <WhyITLearn />
+      <Testimonials />
+      <Community />
+      <TeamSection />
+      <LiveStats />
+      <Faq />
+      <BottomCta />
+    </div>
+  )
+}
 
-        .hero-root {
-          font-family: 'Inter', sans-serif;
-          min-height: 100vh;
-          background-color: #020617;
-          display: flex;
-          align-items: center;
-          position: relative;
-          overflow: hidden;
-        }
+function Hero() {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start start', 'end start'],
+  })
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '20%'])
+  const textY = useTransform(scrollYProgress, [0, 1], ['0%', '-30%'])
+  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
 
-        .hero-root::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background-image:
-            linear-gradient(rgba(99,102,241,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(99,102,241,0.03) 1px, transparent 1px);
-          background-size: 60px 60px;
-          pointer-events: none;
-        }
+  return (
+    <section ref={ref} className="relative min-h-screen flex items-center overflow-hidden bg-background">
+      <div className="absolute inset-0 pointer-events-none z-30 opacity-[0.03] crt-overlay" />
 
-        .blob {
-          position: absolute;
-          border-radius: 50%;
-          filter: blur(110px);
-          opacity: 0.12;
-          pointer-events: none;
-        }
-        .blob-1 {
-          width: 500px;
-          height: 500px;
-          background: radial-gradient(circle, #6366f1, transparent 70%);
-          top: -80px;
-          right: 10%;
-        }
-        .blob-2 {
-          width: 400px;
-          height: 400px;
-          background: radial-gradient(circle, #8b5cf6, transparent 70%);
-          bottom: -60px;
-          left: 5%;
-        }
+      <div className="absolute inset-0 pointer-events-none z-20 noise" />
 
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
-        @keyframes floatY {
-          0%, 100% { transform: translateY(0px); }
-          50%       { transform: translateY(-14px); }
-        }
+      <div
+        className="absolute inset-0 opacity-[0.04]"
+        style={{ backgroundImage: 'linear-gradient(rgba(0,240,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,1) 1px, transparent 1px)', backgroundSize: '40px 40px' }}
+        aria-hidden="true"
+      />
 
-        .fade-up { opacity: 0; animation: fadeUp 0.65s cubic-bezier(0.22,1,0.36,1) forwards; }
-        .fade-in { opacity: 0; animation: fadeIn 0.8s ease forwards; }
-        .d1 { animation-delay: 0.05s; }
-        .d2 { animation-delay: 0.18s; }
-        .d3 { animation-delay: 0.3s; }
-        .d4 { animation-delay: 0.42s; }
-        .d5 { animation-delay: 0.55s; }
-        .d6 { animation-delay: 0.2s; }
+      <motion.div style={{ y: bgY }} className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute top-[-15%] right-[10%] w-[600px] h-[600px] rounded-full bg-primary/5 blur-[150px]" />
+        <div className="absolute bottom-[-15%] left-[5%] w-[450px] h-[450px] rounded-full bg-accent/5 blur-[150px]" />
+      </motion.div>
 
-        .hero-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 40px;
-          align-items: center;
-          width: 100%;
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 120px 48px 80px;
-        }
-
-        @media (max-width: 768px) {
-          .hero-grid {
-            grid-template-columns: 1fr;
-            padding: 100px 24px 60px;
-            text-align: center;
-          }
-          .illus-col { display: none; }
-          .sponsor-text { text-align: center; }
-        }
-
-        .hero-heading {
-          font-family: 'Syne', sans-serif;
-          font-size: clamp(2rem, 3.8vw, 3rem);
-          font-weight: 800;
-          line-height: 1.15;
-          letter-spacing: -0.01em;
-          color: #f8fafc;
-          margin: 0 0 4px;
-        }
-
-        .heading-highlight {
-          display: inline;
-          background: linear-gradient(135deg, #4f52e8 0%, #7c3aed 100%);
-          color: #fff;
-          padding: 12px 12px;
-          border-radius: 12px;
-          box-decoration-break: clone;
-          -webkit-box-decoration-break: clone;
-          line-height: 1.55;
-        }
-
-        .hero-sub {
-          font-size: 1rem;
-          color: #94a3b8;
-          line-height: 1.65;
-          margin: 20px 0 36px;
-          max-width: 440px;
-        }
-
-        .btn-row {
-          display: flex;
-          gap: 14px;
-          flex-wrap: wrap;
-          align-items: center;
-        }
-
-        .btn-primary {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          background: linear-gradient(135deg, #6366f1, #7c3aed);
-          color: #fff;
-          font-family: 'Inter', sans-serif;
-          font-weight: 700;
-          font-size: 0.95rem;
-          border: none;
-          border-radius: 999px;
-          padding: 13px 28px;
-          cursor: pointer;
-          text-decoration: none;
-          box-shadow: 0 4px 20px rgba(99,102,241,0.4);
-          transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-        }
-        .btn-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 28px rgba(99,102,241,0.55);
-          opacity: 0.93;
-        }
-
-        .btn-ghost {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          background: transparent;
-          color: #e2e8f0;
-          font-family: 'Inter', sans-serif;
-          font-weight: 600;
-          font-size: 0.95rem;
-          border: 1.5px solid rgba(226,232,240,0.2);
-          border-radius: 999px;
-          padding: 12px 28px;
-          cursor: pointer;
-          text-decoration: none;
-          transition: background 0.2s, border-color 0.2s, transform 0.2s;
-        }
-        .btn-ghost:hover {
-          background: rgba(226,232,240,0.07);
-          border-color: rgba(226,232,240,0.38);
-          transform: translateY(-2px);
-        }
-
-        .sponsor-text {
-          margin-top: 40px;
-          font-size: 0.75rem;
-          color: #475569;
-          line-height: 1.6;
-          max-width: 420px;
-        }
-        .sponsor-text span {
-          font-weight: 700;
-          color: #64748b;
-          letter-spacing: 0.04em;
-        }
-
-        /* Illustration SVG */
-        .illus-col {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        .illus-wrap {
-          animation: floatY 5s ease-in-out infinite;
-          width: 100%;
-          max-width: 480px;
-        }
-      `}</style>
-
-      <div className="hero-root">
-        <div className="blob blob-1" />
-        <div className="blob blob-2" />
-
-        <div className="hero-grid">
-          {/* Left column */}
-          <div>
-            <h1 className="hero-heading fade-up d1">Discover the</h1>
-            <h1 className="hero-heading fade-up d2" style={{ marginBottom: 0 }}>
-              <span className="heading-highlight">World of Coding</span>
+      <div className="relative w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-32 md:py-40 z-10">
+        <div className="text-center">
+          <motion.div style={{ y: textY, opacity }} className="text-center">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl leading-[1.3] text-text-primary mb-6">
+              Learn to code<br />
+              <span className="gradient-text">like a game</span>
             </h1>
 
-            <p className="hero-sub fade-up d3">
-              Coding made easy by students for students.
+            <p className="font-mono text-text-secondary text-sm sm:text-base leading-relaxed max-w-md mx-auto mb-4">
+              Earn XP. Unlock badges. Climb the leaderboard.
+              Built by students who remember what it is like to start from zero.
             </p>
 
-            <div className="btn-row fade-up d4">
-              <a href="#" className="btn-primary">Get started</a>
-              <a href="#" className="btn-ghost">Try without account</a>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link href="/signup" className="btn btn-primary">
+                START PLAYING ▸
+              </Link>
+              <a href="/learn/?trial=start" className="btn btn-ghost">
+                try --no-account
+              </a>
             </div>
 
-            <div className="sponsor-text fade-up d5">
-              <span>SPONSORED BY:</span> No Sponsors yet, if you want to sponsor feel free to contact us at contact.itlearn@gmail.com
-            </div>
-          </div>
+            <p className="mt-8 font-mono text-[0.65rem] text-text-muted uppercase tracking-widest">
+              <span className="text-text-secondary font-bold">SPONSORED BY:</span>{' '}
+              No sponsors yet — {' '}
+              <a href="mailto:partners@itlearn.be" className="text-primary hover:text-warning transition-colors cursor-pointer">
+                contact us
+              </a>
+            </p>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
 
-          {/* Right column — illustration */}
-          <div className="illus-col fade-in d6">
-            <div className="illus-wrap">
-              <svg viewBox="0 0 520 420" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Desk */}
-                <rect x="120" y="290" width="310" height="14" rx="7" fill="#1e293b"/>
-                <rect x="160" y="304" width="14" height="70" rx="4" fill="#1e293b"/>
-                <rect x="376" y="304" width="14" height="70" rx="4" fill="#1e293b"/>
+const steps = [
+  { step: '01', title: 'SIGN UP', desc: 'Sign up with your email in seconds, or use your Google, GitHub or Discord account.', icon: '▸' },
+  { step: '02', title: 'PICK A TRACK', desc: 'Choose what language or skill you want to learn. From Python to Git, we have it all.', icon: '▸' },
+  { step: '03', title: 'BUILD & EARN XP', desc: 'Every lesson pushes you forward, towards a new goal. No boring theory, just you and the code.', icon: '▸' },
+  { step: '04', title: 'JOIN THE DISCORD', desc: 'Talk to other people learning to code and share your progress.', icon: '▸' },
+]
 
-                {/* Monitor stand */}
-                <rect x="233" y="258" width="16" height="34" rx="4" fill="#334155"/>
-                <rect x="210" y="288" width="62" height="8" rx="4" fill="#334155"/>
+function HowItWorks() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const stickyRef = useRef<HTMLDivElement>(null)
 
-                {/* Monitor */}
-                <rect x="155" y="148" width="222" height="115" rx="12" fill="#0f172a" stroke="#334155" strokeWidth="3"/>
-                <rect x="165" y="158" width="202" height="95" rx="8" fill="#1e293b"/>
-                {/* Screen content */}
-                <rect x="175" y="168" width="80" height="6" rx="3" fill="#6366f1" opacity="0.8"/>
-                <rect x="175" y="180" width="120" height="5" rx="2.5" fill="#334155"/>
-                <rect x="175" y="191" width="100" height="5" rx="2.5" fill="#334155"/>
-                <rect x="175" y="202" width="60" height="5" rx="2.5" fill="#8b5cf6" opacity="0.7"/>
-                <rect x="175" y="215" width="140" height="5" rx="2.5" fill="#334155"/>
-                <rect x="175" y="226" width="90" height="5" rx="2.5" fill="#334155"/>
-                {/* Cursor blink */}
-                <rect x="270" y="226" width="2" height="10" rx="1" fill="#6366f1" opacity="0.9"/>
+  return (
+    <section ref={containerRef} className="relative bg-background-surface">
+      <div ref={stickyRef} className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="font-heading text-2xl sm:text-3xl text-text-primary mb-2">
+              HOW IT <span className="gradient-text">WORKS</span>
+            </h2>
+            <p className="font-mono text-text-muted text-sm">Start learning in just 30 seconds.</p>
+          </motion.div>
 
-                {/* Coffee cup */}
-                <rect x="378" y="268" width="28" height="22" rx="5" fill="#334155"/>
-                <path d="M406 276 Q418 276 418 284 Q418 292 406 292" stroke="#334155" strokeWidth="3" fill="none" strokeLinecap="round"/>
-                <rect x="381" y="264" width="22" height="5" rx="2" fill="#475569"/>
-                {/* Steam */}
-                <path d="M387 260 Q389 254 387 248" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6"/>
-                <path d="M393 258 Q395 252 393 246" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6"/>
-
-                {/* Chair back */}
-                <rect x="305" y="210" width="60" height="90" rx="14" fill="#1e3a5f" opacity="0.9"/>
-                {/* Chair seat */}
-                <rect x="295" y="295" width="80" height="22" rx="10" fill="#1e3a5f" opacity="0.9"/>
-                {/* Chair legs */}
-                <line x1="300" y1="315" x2="285" y2="370" stroke="#334155" strokeWidth="6" strokeLinecap="round"/>
-                <line x1="370" y1="315" x2="385" y2="370" stroke="#334155" strokeWidth="6" strokeLinecap="round"/>
-                <line x1="295" y1="340" x2="380" y2="340" stroke="#334155" strokeWidth="5" strokeLinecap="round"/>
-
-                {/* Person body */}
-                <ellipse cx="320" cy="295" rx="32" ry="20" fill="#2d6a4f" opacity="0.9"/>
-                {/* Torso / shirt */}
-                <path d="M295 290 Q320 310 345 290 L348 330 Q320 345 292 330 Z" fill="#2d6a4f"/>
-                {/* Jacket / hoodie */}
-                <path d="M290 295 Q280 300 278 330 L292 332 Q295 310 295 290 Z" fill="#1a4a3a"/>
-                <path d="M350 295 Q360 300 362 330 L348 332 Q345 310 345 290 Z" fill="#1a4a3a"/>
-
-                {/* Neck */}
-                <rect x="313" y="255" width="14" height="22" rx="6" fill="#f59e7a"/>
-
-                {/* Head */}
-                <ellipse cx="320" cy="245" rx="28" ry="30" fill="#f59e7a"/>
-                {/* Hair */}
-                <path d="M294 238 Q296 210 320 208 Q344 210 346 238 Q340 220 320 218 Q300 220 294 238 Z" fill="#1a0a00"/>
-
-                {/* Headphones */}
-                <path d="M293 235 Q293 208 320 208 Q347 208 347 235" stroke="#374151" strokeWidth="5" fill="none" strokeLinecap="round"/>
-                <rect x="287" y="233" width="10" height="16" rx="5" fill="#374151"/>
-                <rect x="343" y="233" width="10" height="16" rx="5" fill="#374151"/>
-
-                {/* Ear */}
-                <ellipse cx="293" cy="248" rx="5" ry="7" fill="#e8845a"/>
-
-                {/* Arm reaching to keyboard */}
-                <path d="M295 305 Q270 310 255 295" stroke="#f59e7a" strokeWidth="10" strokeLinecap="round" fill="none"/>
-                {/* Hand */}
-                <ellipse cx="252" cy="293" rx="10" ry="7" fill="#f59e7a"/>
-
-                {/* Keyboard */}
-                <rect x="175" y="282" width="130" height="10" rx="4" fill="#1e293b"/>
-                <rect x="178" y="284" width="124" height="6" rx="3" fill="#0f172a"/>
-                {/* Keys rows */}
-                {[0,1,2,3,4,5,6,7,8,9,10,11].map((i) => (
-                  <rect key={i} x={181 + i * 10} y={285} width="7" height="4" rx="1.5" fill="#334155"/>
-                ))}
-
-                {/* Red jacket on chair */}
-                <path d="M348 240 Q370 250 372 290 Q365 295 355 290 Q350 270 348 240 Z" fill="#dc2626" opacity="0.85"/>
-                <path d="M368 290 Q378 292 380 310 Q368 312 360 308 Z" fill="#b91c1c" opacity="0.85"/>
-
-                {/* Shoes */}
-                <ellipse cx="302" cy="368" rx="20" ry="8" fill="#fbbf24"/>
-                <ellipse cx="360" cy="368" rx="20" ry="8" fill="#fbbf24"/>
-              </svg>
-            </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {steps.map((s, i) => (
+              <motion.div
+                key={s.step}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="card group cursor-default"
+              >
+                <div className="font-heading text-4xl text-primary/10 group-hover:text-primary/20 transition-colors mb-4">{s.step}</div>
+                <div className="font-heading text-xs text-primary mb-3 tracking-wider">{s.title}</div>
+                <p className="font-mono text-text-secondary text-xs leading-relaxed">{s.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>
-    </>
+      <div className="h-[50vh]" />
+    </section>
+  )
+}
+
+const courses = [
+  { title: 'PYTHON', desc: 'Variables, loops, games. Easy and fun.', image: 'https://github.com/Broodje565/IT-Learn-Visuals/blob/main/icons/python.png?raw=true', color: 'border-border' },
+  { title: 'HTML', desc: 'Build web page basics', image: 'https://github.com/Broodje565/IT-Learn-Visuals/blob/main/icons/html.png?raw=true', color: 'border-border' },
+  { title: 'CSS', desc: 'Colors, layouts, animations. Style your sites', image: 'https://github.com/Broodje565/IT-Learn-Visuals/blob/main/icons/css.png?raw=true', color: 'border-border' },
+]
+
+function CourseCards() {
+  return (
+    <section className="section-pad bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-14"
+        >
+          <h2 className="font-heading text-2xl sm:text-3xl text-text-primary mb-2">
+            PICK YOUR <span className="gradient-text">TRACK</span>
+          </h2>
+          <p className="font-mono text-text-muted text-sm">No experience needed. Learn to code in your browser from lesson one.</p>
+        </motion.div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {courses.map((course, i) => (
+            <motion.div
+              key={course.title}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.12 }}
+            >
+              <Link
+                href="/login"
+                className={`block card cursor-pointer group transition-all duration-200 hover:-translate-y-1 ${course.color}`}
+              >
+                <div className="w-14 h-14 bg-background-elevated border border-border flex items-center justify-center mb-5 group-hover:shadow-neon-cyan transition-shadow">
+                  <img src={course.image} alt={course.title} className="w-8 h-8 object-contain" />
+                </div>
+                <div className="font-heading text-xs text-text-primary mb-3 tracking-wider">{course.title}</div>
+                <p className="font-mono text-text-secondary text-xs leading-relaxed mb-4">{course.desc}</p>
+                <span className="inline-flex items-center gap-1 font-mono text-primary text-xs font-bold group-hover:text-warning transition-colors">
+                  START ▸
+                </span>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="text-center mt-10">
+          <Link href="/login" className="font-mono text-text-secondary hover:text-primary transition-colors text-xs cursor-pointer">
+            VIEW ALL COURSES ▸
+          </Link>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const platforms = [
+  { key: 'itlearn', label: 'IT LEARN' },
+  { key: 'fcc', label: 'freeCodeCamp' },
+  { key: 'codecademy', label: 'Codecademy' },
+  { key: 'odin', label: 'Odin Project' },
+  { key: 'mimo', label: 'Mimo' },
+  { key: 'coddy', label: 'Coddy' },
+] as const
+
+type PlatformKey = (typeof platforms)[number]['key']
+
+const comparisons: { label: string; results: Record<PlatformKey, boolean> }[] = [
+  { label: 'Free forever', results: { itlearn: true, fcc: true, codecademy: false, odin: true, mimo: false, coddy: false } },
+  { label: 'Built by students', results: { itlearn: true, fcc: false, codecademy: false, odin: true, mimo: false, coddy: false } },
+  { label: 'Gamified (XP, badges)', results: { itlearn: true, fcc: false, codecademy: true, odin: false, mimo: true, coddy: true } },
+  { label: 'No setup needed', results: { itlearn: true, fcc: true, codecademy: true, odin: false, mimo: true, coddy: true } },
+  { label: 'Active Discord', results: { itlearn: true, fcc: true, codecademy: false, odin: true, mimo: false, coddy: false } },
+  { label: 'Real projects', results: { itlearn: true, fcc: true, codecademy: true, odin: true, mimo: true, coddy: true } },
+]
+
+function WhyITLearn() {
+  return (
+    <section className="section-pad bg-background-surface">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-14"
+        >
+          <h2 className="font-heading text-2xl sm:text-3xl text-text-primary mb-2">
+            WHY <span className="gradient-text">HERE</span>?
+          </h2>
+          <p className="font-mono text-text-muted text-sm">Most coding platforms feel like homework. This one does not.</p>
+        </motion.div>
+
+        <div className="border border-border overflow-x-auto">
+          <div className="min-w-[1000px]">
+            <div
+              className="grid gap-2 py-3 px-6 border-b border-border bg-background-elevated"
+              style={{ gridTemplateColumns: `1.4fr repeat(${platforms.length}, 1fr)` }}
+            >
+              <div className="font-heading text-[0.65rem] text-text-primary tracking-widest">FEATURE</div>
+              {platforms.map(p => (
+                <div
+                  key={p.key}
+                  className={`font-heading text-[0.6rem] tracking-widest text-center whitespace-nowrap ${p.key === 'itlearn' ? 'text-primary' : 'text-text-muted'}`}
+                >
+                  {p.label}
+                </div>
+              ))}
+            </div>
+            {comparisons.map((row, i) => (
+              <motion.div
+                key={row.label}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.06 }}
+                className="grid gap-2 py-4 px-6 border-b border-border/50 last:border-0 hover:bg-background-elevated/50 transition-colors"
+                style={{ gridTemplateColumns: `1.4fr repeat(${platforms.length}, 1fr)` }}
+              >
+                <div className="font-mono text-text-secondary text-xs self-center">{row.label}</div>
+                {platforms.map(p => (
+                  <div key={p.key} className="text-center self-center">
+                    {row.results[p.key] ? (
+                      <span className={p.key === 'itlearn' ? 'text-success text-sm' : 'text-text-muted text-sm'}>{'\u2713'}</span>
+                    ) : (
+                      <span className="text-error/60 text-sm">{'\u2715'}</span>
+                    )}
+                  </div>
+                ))}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const testimonials = [
+  { quote: 'this is cool feedback', name: 'this is a username', role: 'this is what they do (e.g. Student)' },
+  { quote: 'so here you put feedback', name: 'this is def not a username', role: 'frontend dev' },
+  { quote: 'THIS PLATFORM IS AMAZING', name: 'supperman', role: 'co owner (so definetly not biased)' },
+  { quote: 'i like whoppers more', name: 'Burger King Employee', role: 'baking burgers (and websites)' },
+]
+
+function Testimonials() {
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  return (
+    <section className="section-pad bg-background overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-14"
+        >
+          <h2 className="font-heading text-2xl sm:text-3xl text-text-primary mb-2">
+            REAL <span className="gradient-text">STUDENTS</span>
+          </h2>
+        </motion.div>
+      </div>
+
+      <div
+        ref={scrollRef}
+        className="flex gap-6 overflow-x-auto pb-6 px-4 sm:px-6 lg:px-8 snap-x snap-mandatory"
+        style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,240,255,0.2) transparent' }}
+      >
+        {testimonials.map((t, i) => (
+          <motion.div
+            key={t.name}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.1 }}
+            className="card snap-start shrink-0 w-[320px] sm:w-[380px]"
+          >
+            <div className="font-mono text-primary/20 text-3xl mb-4">&ldquo;</div>
+            <p className="font-mono text-text-secondary text-sm leading-relaxed mb-6">{t.quote}</p>
+            <div className="border-t border-border pt-4">
+              <div className="font-heading text-[0.6rem] text-text-primary tracking-widest">{t.name}</div>
+              <div className="font-mono text-text-muted text-xs mt-1">{t.role}</div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function Community() {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start end', 'end start'],
+  })
+  const imgY = useTransform(scrollYProgress, [0, 1], ['10%', '-10%'])
+
+  return (
+    <section ref={ref} className="section-pad bg-background-surface overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <motion.div style={{ y: imgY }} className="order-2 lg:order-1 flex justify-center">
+            <img
+              src="https://files.itlearn.be/images/branding/icons/student_with_itlearn.png"
+              alt="Student community illustration"
+              className="w-full max-w-[380px] h-auto"
+              style={{ imageRendering: 'pixelated' }}
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="order-1 lg:order-2"
+          >
+            <h2 className="font-heading text-2xl sm:text-3xl text-text-primary mb-4">
+              CODERS ON THE{' '}
+              <span className="gradient-text">SAME QUEST</span>
+            </h2>
+            <p className="font-mono text-text-secondary text-sm leading-relaxed mb-8 max-w-md">
+              Building together is more fun! Join our Discord to share projects, ask questions and talk about the beautiful world of code.
+            </p>
+            <a
+              href="https://discord.itlearn.be/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+            >
+              JOIN THE DISCORD SERVER
+            </a>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const teamMembers = [
+  { name: 'Broodje56', role: 'Founder', category: 'owner', image: 'https://files.itlearn.be/images/branding/pfp/Broodje56.png', bio: 'I am Broodje56, and together with Joren I co-founded IT Learn. From a young age, I have been fascinated by technology and computers. With IT Learn, my goal is to share that passion and help other young people discover the fun and creative side of programming through interactive learning.', link: 'https://github.com/Broodje565' },
+  { name: 'Joren', role: 'Founder', category: 'owner', image: 'https://files.itlearn.be/images/branding/pfp/AIM_pfp.png', bio: 'I am Joren, and together with Broodje56 I co-founded IT Learn. I have been programming since I was 11 and have worked on different projects. I have also helped multiple people create websites and apps. With IT Learn, I want to help others learn programming in a fun and educational way. I hope you will enjoy our project!', link: 'https://github.com/JorenS15' },
+  { name: 'super_man2775', role: 'Co-owner', category: 'owner', image: 'https://files.itlearn.be/images/branding/pfp/Superman.png', bio: 'Hello! I am super_man2775, the co-owner of IT Learn! I am very happy to be part of this project, and I still have lots of exciting and useful ideas on my to-do list. I hope to make IT Learn grow into something really big one day.', link: 'https://www.superman2775.eu/' },
+  { name: 'Miltie', role: 'Manager', category: 'manager', image: 'https://files.itlearn.be/images/branding/pfp/Miltie.jpg', bio: 'My name is Miltie, and I am the Manager of the IT-Learn Discord. I am trying to learn a couple of different coding languages at the moment, with the help of this platform ofcourse. I would love to be able to help programming this website later. I am looking to help this community where necessary, and hope to meet you here too!', link: 'https://discord.itlearn.be/' },
+  { name: 'Nunoke', role: 'Developer', category: 'developer', image: 'https://files.itlearn.be/images/branding/pfp/Nunoke.png', bio: 'I am Nuno, and I am a developer at IT Learn. I am a computer science student and I love making websites and I want to teach it myself. That is why I want to help create IT Learn to make learning it even easier and more fun.', link: 'https://github.com/Nunoke123' },
+  { name: 'viviodezio', role: 'Moderator', category: 'moderator', image: 'https://files.itlearn.be/images/branding/pfp/Viviodezio.png', bio: 'Hi, I am Vivio and I am a moderator for IT Learn, so I mainly keep the Discord safe and engaging. I am currently learning how to code with IT Learn, and hope to see you in the Discord server too!', link: 'https://discord.itlearn.be' },
+]
+
+const categories = [
+  { key: 'owner', label: 'OWNERS' },
+  { key: 'manager', label: 'MANAGERS' },
+  { key: 'developer', label: 'DEVELOPERS' },
+  { key: 'moderator', label: 'MODERATORS' },
+]
+
+function TeamSection() {
+  const [active, setActive] = useState('owner')
+  const filtered = teamMembers.filter(m => m.category === active)
+
+  return (
+    <section id="team" className="section-pad bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <h2 className="font-heading text-2xl sm:text-3xl text-text-primary mb-2">
+            BUILT BY <span className="gradient-text">REAL PEOPLE</span>
+          </h2>
+          <p className="font-mono text-text-muted text-sm">Just a bunch of random people working on this thing! No corporate team page here.</p>
+        </motion.div>
+
+        <div className="sticky top-[5.5rem] z-40 flex flex-wrap justify-center gap-2 mb-12 py-3 bg-background/80 backdrop-blur-sm">
+          {categories.map(cat => (
+            <button
+              key={cat.key}
+              onClick={() => setActive(cat.key)}
+              className={`font-heading text-[0.55rem] tracking-widest px-4 py-2 border transition-all cursor-pointer ${
+                active === cat.key
+                  ? 'border-primary text-primary bg-primary/[0.05] shadow-neon-cyan'
+                  : 'border-border text-text-muted hover:text-text-secondary hover:border-text-muted'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filtered.map((m, i) => (
+            <motion.div
+              key={m.name + m.role}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06 }}
+              className="card group"
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <img src={m.image} alt={m.name} className="w-12 h-12 object-cover border border-border" />
+                <div>
+                  <div className="font-heading text-[0.55rem] text-text-primary tracking-widest">{m.name}</div>
+                  <div className="font-mono text-primary text-[0.6rem] tracking-wider">{m.role}</div>
+                </div>
+              </div>
+              <p className="font-mono text-text-secondary text-xs leading-relaxed mb-4">{m.bio}</p>
+              <a href={m.link} target="_blank" rel="noopener noreferrer" className="font-mono text-primary text-[0.6rem] hover:text-warning transition-colors cursor-pointer">
+                VIEW PROFILE ▸
+              </a>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const stats = [
+  { value: '0', label: 'LEARNERS' },
+  { value: '0', label: 'COUNTRIES' },
+  { value: '0', label: 'COURSES' },
+  { value: '0', label: 'PROJECTS' },
+]
+
+function LiveStats() {
+  return (
+    <section className="section-pad bg-background-surface">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="arcade-screen p-10 md:p-14"
+        >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="text-center"
+              >
+                <div className="font-heading text-2xl sm:text-3xl gradient-text mb-2">{stat.value}</div>
+                <div className="font-heading text-[0.5rem] text-text-muted tracking-widest">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
+const faqs = [
+  { q: 'IS IT REALLY FREE?', a: 'Yes! No paywalls, credit cards and advertisements! Just you and the code. We don\'t even have a bank account!' },
+  { q: 'DO I NEED EXPERIENCE?', a: 'No. Our courses start from zero, and guide you from start to finish. You only need a computer and some curiosity.' },
+  { q: 'HOW IS THIS DIFFERENT?', a: 'Our platform is built by students. We learn you the skills you need in a fun, engaging way.' },
+  { q: 'WHAT CAN I LEARN?', a: 'We currently offer mainly courses for web development. From DNS to Git, we have you covered.' },
+  { q: 'HOW DO I GET HELP?', a: 'Join our Discord. The community is always ready to help you fixing bugs, asking questions, and sharing knowledge.' },
+  { q: 'CAN I CONTRIBUTE?', a: 'Yes. The project is open source. Fix bugs, write courses or maybe even new features. Check GitHub or say hi in Discord.' },
+]
+
+function Faq() {
+  const [open, setOpen] = useState<number | null>(null)
+
+  return (
+    <section className="section-pad bg-background">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-14"
+        >
+          <h2 className="font-heading text-2xl sm:text-3xl text-text-primary">
+            <span className="gradient-text">FAQ</span>
+          </h2>
+        </motion.div>
+
+        <div className="space-y-2">
+          {faqs.map((faq, i) => (
+            <div key={i} className="border border-border">
+              <button
+                type="button"
+                onClick={() => setOpen(open === i ? null : i)}
+                id={`faq-q-${i}`}
+                aria-expanded={open === i}
+                aria-controls={`faq-a-${i}`}
+                className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer hover:bg-background-surface/50 transition-colors"
+              >
+                <span className="font-heading text-[0.55rem] text-text-primary tracking-widest pr-4">{faq.q}</span>
+                <span className="font-mono text-primary text-sm shrink-0">{open === i ? '\u25BE' : '\u25B8'}</span>
+              </button>
+              <div
+                id={`faq-a-${i}`}
+                role="region"
+                aria-labelledby={`faq-q-${i}`}
+                className={`overflow-hidden transition-all duration-200 ${open === i ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'}`}
+              >
+                <div className="border-t border-border px-5 pb-5">
+                  <p className="font-mono text-text-secondary text-xs leading-relaxed pt-4">{faq.a}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function BottomCta() {
+  return (
+    <section className="section-pad bg-background-surface">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="arcade-screen"
+        >
+          <div className="grid lg:grid-cols-2 gap-8 items-center p-10 md:p-16">
+            <div>
+              <h2 className="font-heading text-2xl sm:text-3xl text-text-primary mb-4">
+                START <span className="gradient-text">FOR FREE</span>
+              </h2>
+              <p className="font-mono text-text-secondary text-sm mb-8 max-w-md">
+                No credit card. No trial period. Open a project and go.
+                Join over a thousand learners already leveling up.
+              </p>
+              <Link href="/signup" className="btn btn-primary">
+                CREATE ACCOUNT ▸
+              </Link>
+            </div>
+            <div className="flex justify-center">
+              <img
+                src="https://github.com/Broodje565/IT-Learn-Visuals/blob/main/icons/programmer.png?raw=true"
+                alt=""
+                className="w-full max-w-[240px] h-auto"
+                style={{ imageRendering: 'pixelated' }}
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
   )
 }

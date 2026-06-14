@@ -1,268 +1,170 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+
+type DropdownKey = 'community' | 'company' | 'language' | null
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [communityDropdown, setCommunityDropdown] = useState(false)
-  const [companyDropdown, setCompanyDropdown] = useState(false)
-  const [languageDropdown, setLanguageDropdown] = useState(false)
+  const [activeDropdown, setActiveDropdown] = useState<DropdownKey>(null)
+  const navRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setActiveDropdown(null)
+        setMobileMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  useEffect(() => {
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setActiveDropdown(null)
+        setMobileMenuOpen(false)
+      }
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [])
+
+  const toggleDropdown = (key: DropdownKey) => {
+    setActiveDropdown(prev => (prev === key ? null : key))
+  }
+
+  const closeAll = () => {
+    setActiveDropdown(null)
+    setMobileMenuOpen(false)
+  }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm">
-      <div
-        className="glass border-b border-border"
-        style={{ backdropFilter: 'blur(10px)' }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            {/* Logo */}
-            <Link href="/" className="text-2xl font-bold">
-              <span className="text-primary">IT</span>
-              <span className="text-text-primary"> Learn</span>
+    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50" role="navigation" aria-label="Main navigation">
+      <div className="border-b border-border bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex justify-between items-center h-16">
+            <Link
+              href="/"
+              className="flex items-center gap-2 cursor-pointer shrink-0"
+              onClick={closeAll}
+            >
+              <span className="font-heading text-xl text-primary neon-cyan">IT</span>
+              <span className="font-heading text-xl text-text-primary">Learn</span>
             </Link>
 
-            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-1">
-              {/* Community Dropdown */}
-              <div className="relative group">
-                <button className="px-4 py-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-surface">
-                  Community
-                </button>
-                <div className="absolute top-full left-0 mt-0 w-48 bg-glass border border-border rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  <Link
-                    href="#"
-                    className="block px-4 py-3 text-text-secondary hover:text-primary hover:bg-surface transition-all first:rounded-t-lg last:rounded-b-lg"
-                  >
-                    Forum
-                  </Link>
-                  <Link
-                    href="#"
-                    className="block px-4 py-3 text-text-secondary hover:text-primary hover:bg-surface transition-all first:rounded-t-lg last:rounded-b-lg"
-                  >
-                    Events
-                  </Link>
-                  <Link
-                    href="#"
-                    className="block px-4 py-3 text-text-secondary hover:text-primary hover:bg-surface transition-all first:rounded-t-lg last:rounded-b-lg"
-                  >
-                    Challenges
-                  </Link>
-                </div>
-              </div>
-
-              {/* Company Dropdown */}
-              <div className="relative group">
-                <button className="px-4 py-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-surface">
-                  Company
-                </button>
-                <div className="absolute top-full left-0 mt-0 w-48 bg-glass border border-border rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  <Link
-                    href="#"
-                    className="block px-4 py-3 text-text-secondary hover:text-primary hover:bg-surface transition-all first:rounded-t-lg last:rounded-b-lg"
-                  >
-                    About Us
-                  </Link>
-                  <Link
-                    href="#"
-                    className="block px-4 py-3 text-text-secondary hover:text-primary hover:bg-surface transition-all first:rounded-t-lg last:rounded-b-lg"
-                  >
-                    Careers
-                  </Link>
-                  <Link
-                    href="#"
-                    className="block px-4 py-3 text-text-secondary hover:text-primary hover:bg-surface transition-all first:rounded-t-lg last:rounded-b-lg"
-                  >
-                    Contact
-                  </Link>
-                </div>
-              </div>
-
-              <Link
-                href="#"
-                className="px-4 py-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-surface"
-              >
-                Pricing
+              <Link href="/login" className="font-mono text-xs text-text-secondary hover:text-primary transition-colors px-3 py-2 cursor-pointer" onClick={closeAll}>
+                Learn
               </Link>
+              <Link href="/login" className="font-mono text-xs text-text-secondary hover:text-primary transition-colors px-3 py-2 cursor-pointer" onClick={closeAll}>
+                Practice
+              </Link>
+              <Link href="/login" className="font-mono text-xs text-text-secondary hover:text-primary transition-colors px-3 py-2 cursor-pointer" onClick={closeAll}>
+                Build
+              </Link>
+
+              <div className="relative">
+                <button
+                  onClick={() => toggleDropdown('community')}
+                  aria-expanded={activeDropdown === 'community'}
+                  aria-haspopup="true"
+                  className="flex items-center gap-1 font-mono text-xs text-text-secondary hover:text-primary transition-colors px-3 py-2 cursor-pointer"
+                >
+                  Community
+                  <span className="text-[0.5rem]">{activeDropdown === 'community' ? '▾' : '▸'}</span>
+                </button>
+                {activeDropdown === 'community' && (
+                  <DropdownMenu>
+                    <DropdownItem href="https://discord.itlearn.be/" onClick={closeAll} external>Discord</DropdownItem>
+                    <DropdownItem href="/thanks" onClick={closeAll}>Thanks</DropdownItem>
+                    <DropdownItem href="/roadmap" onClick={closeAll}>Roadmap</DropdownItem>
+                  </DropdownMenu>
+                )}
+              </div>
+
+              <div className="relative">
+                <button
+                  onClick={() => toggleDropdown('company')}
+                  aria-expanded={activeDropdown === 'company'}
+                  aria-haspopup="true"
+                  className="flex items-center gap-1 font-mono text-xs text-text-secondary hover:text-primary transition-colors px-3 py-2 cursor-pointer"
+                >
+                  Company
+                  <span className="text-[0.5rem]">{activeDropdown === 'company' ? '▾' : '▸'}</span>
+                </button>
+                {activeDropdown === 'company' && (
+                  <DropdownMenu>
+                    <DropdownItem href="/about" onClick={closeAll}>About us</DropdownItem>
+                    <DropdownItem href="/roadmap" onClick={closeAll}>Roadmap</DropdownItem>
+                    <DropdownItem href="https://itlearn.beehiiv.com/" onClick={closeAll} external>Newsletter</DropdownItem>
+                    <DropdownItem href="#" onClick={closeAll}>Help Center</DropdownItem>
+                  </DropdownMenu>
+                )}
+              </div>
             </div>
 
-            {/* Right Side Items */}
-            <div className="hidden md:flex items-center gap-4">
-              {/* Language Selector */}
-              <div className="relative group">
-                <button className="flex items-center gap-2 px-3 py-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-surface">
-                  <span>🌐</span>
+            <div className="hidden md:flex items-center gap-2">
+              <div className="relative">
+                <button
+                  onClick={() => toggleDropdown('language')}
+                  aria-expanded={activeDropdown === 'language'}
+                  aria-haspopup="true"
+                  aria-label="Select language"
+                  className="flex items-center gap-1 font-mono text-xs text-text-secondary hover:text-primary transition-colors px-3 py-2 cursor-pointer"
+                >
+                  <GlobeIcon className="w-3.5 h-3.5" />
                   <span>EN</span>
                 </button>
-                <div className="absolute top-full right-0 mt-0 w-32 bg-glass border border-border rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  <button className="block w-full text-left px-4 py-3 text-text-secondary hover:text-primary hover:bg-surface transition-all first:rounded-t-lg last:rounded-b-lg">
-                    English
-                  </button>
-                  <button className="block w-full text-left px-4 py-3 text-text-secondary hover:text-primary hover:bg-surface transition-all first:rounded-t-lg last:rounded-b-lg">
-                    Dutch
-                  </button>
-                  <button className="block w-full text-left px-4 py-3 text-text-secondary hover:text-primary hover:bg-surface transition-all first:rounded-t-lg last:rounded-b-lg">
-                    French
-                  </button>
-                </div>
+                {activeDropdown === 'language' && (
+                  <DropdownMenu align="right">
+                    <button onClick={closeAll} className="block w-full text-left font-mono text-xs text-text-secondary hover:text-primary hover:bg-background-elevated transition-colors cursor-pointer px-4 py-2">
+                      English
+                    </button>
+                    <button onClick={closeAll} className="block w-full text-left font-mono text-xs text-text-secondary hover:text-primary hover:bg-background-elevated transition-colors cursor-pointer px-4 py-2">
+                      Nederlands
+                    </button>
+                    <button onClick={closeAll} className="block w-full text-left font-mono text-xs text-text-secondary hover:text-primary hover:bg-background-elevated transition-colors cursor-pointer px-4 py-2">
+                      Français
+                    </button>
+                  </DropdownMenu>
+                )}
               </div>
 
-              {/* Login Button */}
-              <Link
-                href="/login"
-                className="px-4 py-2 text-text-secondary hover:text-primary transition-colors border border-border rounded-lg hover:border-primary"
-              >
-                Login
+              <Link href="/login" className="font-mono text-xs text-text-secondary hover:text-primary transition-colors border border-border px-4 py-2 cursor-pointer hover:border-primary/30" onClick={closeAll}>
+                LOGIN
               </Link>
-
-              {/* Sign Up Button */}
-              <Link
-                href="/signup"
-                className="px-6 py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors"
-              >
-                Sign Up
+              <Link href="/signup" className="font-mono text-xs btn btn-primary" onClick={closeAll}>
+                SIGN UP
               </Link>
             </div>
 
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-text-secondary hover:text-primary transition-colors"
+              aria-expanded={mobileMenuOpen}
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              className="md:hidden font-mono text-text-secondary hover:text-primary transition-colors cursor-pointer p-2"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
+              {mobileMenuOpen ? '[X]' : '[≡]'}
             </button>
           </div>
 
-          {/* Mobile Menu */}
           {mobileMenuOpen && (
             <div className="md:hidden border-t border-border py-4">
-              <div className="space-y-2">
-                <div>
-                  <button
-                    onClick={() => setCommunityDropdown(!communityDropdown)}
-                    className="w-full text-left px-4 py-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-surface flex justify-between items-center"
-                  >
-                    Community
-                    <span className={`transition-transform ${communityDropdown ? 'rotate-180' : ''}`}>
-                      ▼
-                    </span>
-                  </button>
-                  {communityDropdown && (
-                    <div className="pl-4 space-y-2 mt-2">
-                      <Link
-                        href="#"
-                        className="block px-4 py-2 text-text-secondary hover:text-primary hover:bg-surface transition-all rounded-lg"
-                      >
-                        Forum
-                      </Link>
-                      <Link
-                        href="#"
-                        className="block px-4 py-2 text-text-secondary hover:text-primary hover:bg-surface transition-all rounded-lg"
-                      >
-                        Events
-                      </Link>
-                      <Link
-                        href="#"
-                        className="block px-4 py-2 text-text-secondary hover:text-primary hover:bg-surface transition-all rounded-lg"
-                      >
-                        Challenges
-                      </Link>
-                    </div>
-                  )}
+              <div className="space-y-1">
+                <Link href="/login" className="block font-mono text-xs text-text-secondary hover:text-primary transition-colors px-4 py-2.5 cursor-pointer" onClick={closeAll}>Learn</Link>
+                <Link href="/login" className="block font-mono text-xs text-text-secondary hover:text-primary transition-colors px-4 py-2.5 cursor-pointer" onClick={closeAll}>Practice</Link>
+                <Link href="/login" className="block font-mono text-xs text-text-secondary hover:text-primary transition-colors px-4 py-2.5 cursor-pointer" onClick={closeAll}>Build</Link>
+                <MobileDropdown label="Community" links={[{ href: 'https://discord.itlearn.be/', label: 'Discord' }, { href: '/thanks', label: 'Thanks' }, { href: '/roadmap', label: 'Roadmap' }]} onLinkClick={closeAll} />
+                <MobileDropdown label="Company" links={[{ href: '/about', label: 'About us' }, { href: '/roadmap', label: 'Roadmap' }, { href: 'https://itlearn.beehiiv.com/', label: 'Newsletter' }, { href: '#', label: 'Help Center' }]} onLinkClick={closeAll} />
+                <div className="border-t border-border pt-3 mt-3">
+                  <MobileDropdown label="Language" links={[{ href: '#', label: 'English' }, { href: '#', label: 'Nederlands' }, { href: '#', label: 'Français' }]} onLinkClick={closeAll} />
                 </div>
-
-                <div>
-                  <button
-                    onClick={() => setCompanyDropdown(!companyDropdown)}
-                    className="w-full text-left px-4 py-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-surface flex justify-between items-center"
-                  >
-                    Company
-                    <span className={`transition-transform ${companyDropdown ? 'rotate-180' : ''}`}>
-                      ▼
-                    </span>
-                  </button>
-                  {companyDropdown && (
-                    <div className="pl-4 space-y-2 mt-2">
-                      <Link
-                        href="#"
-                        className="block px-4 py-2 text-text-secondary hover:text-primary hover:bg-surface transition-all rounded-lg"
-                      >
-                        About Us
-                      </Link>
-                      <Link
-                        href="#"
-                        className="block px-4 py-2 text-text-secondary hover:text-primary hover:bg-surface transition-all rounded-lg"
-                      >
-                        Careers
-                      </Link>
-                      <Link
-                        href="#"
-                        className="block px-4 py-2 text-text-secondary hover:text-primary hover:bg-surface transition-all rounded-lg"
-                      >
-                        Contact
-                      </Link>
-                    </div>
-                  )}
-                </div>
-
-                <Link
-                  href="#"
-                  className="block px-4 py-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-surface"
-                >
-                  Pricing
-                </Link>
-
-                <div className="border-t border-border pt-2 mt-2">
-                  <button
-                    onClick={() => setLanguageDropdown(!languageDropdown)}
-                    className="w-full text-left px-4 py-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-surface flex justify-between items-center"
-                  >
-                    <span>🌐 EN</span>
-                    <span className={`transition-transform ${languageDropdown ? 'rotate-180' : ''}`}>
-                      ▼
-                    </span>
-                  </button>
-                  {languageDropdown && (
-                    <div className="pl-4 space-y-2 mt-2">
-                      <button className="block w-full text-left px-4 py-2 text-text-secondary hover:text-primary hover:bg-surface transition-all rounded-lg">
-                        English
-                      </button>
-                      <button className="block w-full text-left px-4 py-2 text-text-secondary hover:text-primary hover:bg-surface transition-all rounded-lg">
-                        Dutch
-                      </button>
-                      <button className="block w-full text-left px-4 py-2 text-text-secondary hover:text-primary hover:bg-surface transition-all rounded-lg">
-                        French
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                <div className="border-t border-border pt-2 mt-2 space-y-2">
-                  <Link
-                    href="/login"
-                    className="block px-4 py-2 text-text-secondary hover:text-primary transition-colors border border-border rounded-lg hover:border-primary text-center"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="block px-4 py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors text-center"
-                  >
-                    Sign Up
-                  </Link>
+                <div className="border-t border-border pt-3 mt-3 space-y-2 px-2">
+                  <Link href="/login" className="block w-full font-mono text-xs text-text-secondary hover:text-primary transition-colors border border-border px-4 py-2.5 text-center cursor-pointer hover:border-primary/30" onClick={closeAll}>LOGIN</Link>
+                  <Link href="/signup" className="block w-full font-mono text-xs btn btn-primary text-center" onClick={closeAll}>SIGN UP</Link>
                 </div>
               </div>
             </div>
@@ -270,5 +172,64 @@ export function Navbar() {
         </div>
       </div>
     </nav>
+  )
+}
+
+function DropdownMenu({ children, align = 'left' }: { children: React.ReactNode; align?: 'left' | 'right' }) {
+  return (
+    <div className={`absolute top-full mt-1 w-44 border border-border bg-background-surface shadow-neon-cyan z-50 ${align === 'right' ? 'right-0' : 'left-0'}`} role="menu">
+      {children}
+    </div>
+  )
+}
+
+function DropdownItem({ href, onClick, children, external = false }: { href: string; onClick: () => void; children: React.ReactNode; external?: boolean }) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      role="menuitem"
+      className="block font-mono text-xs text-text-secondary hover:text-primary hover:bg-background-elevated transition-colors cursor-pointer px-4 py-2"
+    >
+      {children}
+    </Link>
+  )
+}
+
+function MobileDropdown({ label, links, onLinkClick }: { label: string; links: { href: string; label: string }[]; onLinkClick: () => void }) {
+  const [open, setOpen] = useState(false)
+  const isExternal = (href: string) => href.startsWith('http')
+
+  return (
+    <div>
+      <button onClick={() => setOpen(!open)} aria-expanded={open} className="w-full flex items-center justify-between font-mono text-xs text-text-secondary hover:text-primary transition-colors px-4 py-2.5 cursor-pointer">
+        {label}
+        <span className="text-[0.5rem]">{open ? '▾' : '▸'}</span>
+      </button>
+      {open && (
+        <div className="pl-2 space-y-1 mt-1">
+          {links.map(link =>
+            isExternal(link.href) ? (
+              <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" onClick={onLinkClick} className="block font-mono text-xs text-text-secondary hover:text-primary transition-colors cursor-pointer px-4 py-2.5">
+                {link.label}
+              </a>
+            ) : (
+              <Link key={link.label} href={link.href} onClick={onLinkClick} className="block font-mono text-xs text-text-secondary hover:text-primary transition-colors cursor-pointer px-4 py-2.5">
+                {link.label}
+              </Link>
+            )
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function GlobeIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+    </svg>
   )
 }
