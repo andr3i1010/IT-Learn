@@ -120,13 +120,13 @@ export function Navbar() {
                 </button>
                 {activeDropdown === 'language' && (
                   <DropdownMenu align="right">
-                    <button onClick={closeAll} className="block w-full text-left font-mono text-xs text-text-secondary hover:text-primary hover:bg-background-elevated transition-colors cursor-pointer px-4 py-2">
+                    <button onClick={closeAll} role="menuitem" className="block w-full text-left font-mono text-xs text-text-secondary hover:text-primary hover:bg-background-elevated transition-colors cursor-pointer px-4 py-2">
                       English
                     </button>
-                    <button onClick={closeAll} className="block w-full text-left font-mono text-xs text-text-secondary hover:text-primary hover:bg-background-elevated transition-colors cursor-pointer px-4 py-2">
+                    <button onClick={closeAll} role="menuitem" className="block w-full text-left font-mono text-xs text-text-secondary hover:text-primary hover:bg-background-elevated transition-colors cursor-pointer px-4 py-2">
                       Nederlands
                     </button>
-                    <button onClick={closeAll} className="block w-full text-left font-mono text-xs text-text-secondary hover:text-primary hover:bg-background-elevated transition-colors cursor-pointer px-4 py-2">
+                    <button onClick={closeAll} role="menuitem" className="block w-full text-left font-mono text-xs text-text-secondary hover:text-primary hover:bg-background-elevated transition-colors cursor-pointer px-4 py-2">
                       Français
                     </button>
                   </DropdownMenu>

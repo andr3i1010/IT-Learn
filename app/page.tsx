@@ -535,6 +535,7 @@ function Faq() {
                 id={`faq-a-${i}`}
                 role="region"
                 aria-labelledby={`faq-q-${i}`}
+                aria-hidden={open !== i}
                 className={`overflow-hidden transition-all duration-200 ${open === i ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'}`}
               >
                 <div className="border-t border-border px-5 pb-5">

@@ -76,7 +76,6 @@ const config: Config = {
         'fade-up': 'fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards',
         'fade-in': 'fadeIn 0.4s ease forwards',
         float: 'float 5s ease-in-out infinite',
-        'count-up': 'countUp 2s ease-out forwards',
       },
       keyframes: {
         glitch1: {
