@@ -7,7 +7,7 @@ import { auth } from '@/lib/auth/server';
 import { UserProvider } from '@/components/userStore';
 import { headers } from 'next/headers';
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: 'ITLearn | The free code education platform.',
@@ -18,7 +18,7 @@ export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
-  }) {
+}) {
   const user = await auth.api.getSession({
     headers: await headers()
   })
