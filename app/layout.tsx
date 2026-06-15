@@ -18,9 +18,30 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
   }) {
-  const headers = new Headers();
+import type { Metadata } from 'next'
+import './globals.css'
+import { TRPCReactProvider } from '`@/trpc/client`'
+import { Geist } from "next/font/google";
+import { cn } from "`@/lib/utils`";
+import { auth } from '`@/lib/auth/server`';
+import { UserProvider } from '`@/components/userStore`';
+import { headers } from 'next/headers';
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
+export const metadata: Metadata = {
+  title: 'ITLearn | The free code education platform.',
+  description: 'Learn IT skills and advance your career with ITLearn',
+}
+
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+  }) {
+  const reqHeaders = await headers();
   const user = await auth.api.getSession({
-    headers 
+    headers: reqHeaders
   })
   return (
     <html lang="en" className={cn("antialiased", "font-sans", geist.variable)}>
