@@ -5,6 +5,7 @@ import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { auth } from '@/lib/auth/server';
 import { UserProvider } from '@/components/userStore';
+import { headers } from 'next/headers';
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -18,9 +19,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
   }) {
-  const headers = new Headers();
   const user = await auth.api.getSession({
-    headers 
+    headers: await headers()
   })
   return (
     <html lang="en" className={cn("antialiased", "font-sans", geist.variable)}>
